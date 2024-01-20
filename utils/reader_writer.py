@@ -69,5 +69,23 @@ def write_results_csv(file_path, single_tokens_sets_per_patient):
     with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(['Patient', 'Tokens Uniques'])
-        for patient, ensemble_tokens_uniques in single_tokens_sets_per_patient.items():
-            writer.writerow([patient, ', '.join(single_tokens_sets_per_patient)])
+        for patient, single_tokens_set in single_tokens_sets_per_patient.items():
+            writer.writerow([patient, ', '.join(single_tokens_set)])
+
+
+def write_vocabulary_csv(file_path, vocabulary):
+    """
+    Write a vocabulary to a CSV file.
+
+    Parameters:
+    - file_path (str): The path to the CSV file to be created or overwritten.
+    - vocabulary (iterable): An iterable containing words to be written to the CSV file.
+
+    Note:
+    - Each word in the vocabulary is written as a separate row in the CSV file.
+    - The CSV file will contain a single column named 'Word'.
+    """
+    with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        for word in vocabulary:
+            writer.writerow([word])

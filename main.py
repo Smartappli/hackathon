@@ -6,7 +6,7 @@
 
 import os
 import spacy
-from utils.reader_writer import read_results_file
+from utils.reader_writer import read_results_file, write_results_csv, write_vocabulary_csv
 from utils.file_operation import create_or_recover_vocabulary, number_of_patients_and_files
 from utils.tokenization import token_extraction
 # Parameters
@@ -49,7 +49,7 @@ if verbose:
     print(f"-----> The number of patients to be treated: {total_directories}")
     print(f"-----> The number of files to be processed: {total_files}")
 
-print("\nStep 3 - Step 1 - Results File Reading or Creation.")
+print("\nStep 3 - Results File Reading or Creation.")
 
 if verbose:
     print(f"-----> Results file path: {results_file_path}")
@@ -63,15 +63,36 @@ if verbose:
     else:
         print("-----> The dictionary file does not exist.")
 
-print("\nStep 4 - Identification of patient directories to be processed")
-patients_path = [os.path.join(patients_root_directory, patient) for patient in os.listdir(patients_root_directory) if os.path.isdir(os.path.join(patients_root_directory, patient))]
-if verbose:
-    print (f"-----> Patient directories to be processed: {patients_path}")
+# print("\nStep 4 - Identification of patient directories to be processed")
+# patients_path = [os.path.join(patients_root_directory, patient) for patient in os.listdir(patients_root_directory) if os.path.isdir(os.path.join(patients_root_directory, patient))]
+# if verbose:
+#     print (f"-----> Patient directories to be processed: {patients_path}")
 
 print("\nStep 5 - Patients Processing")
 patient_cpt = 1
-for patient_path in patients_path:
-    print(f"-----> Processing Directory: ({patient_cpt}/{total_directories}: {patient_path}")
-    print(f"-----> Token Extraction: {patient_path}")
-    patient_token = token_extraction(patient_path, nlp)
-    print(patient_token)
+# for patient_path in patients_path:
+for patient in os.listdir(patients_root_directory):
+    if os.path.isdir(os.path.join(patients_root_directory, patient)):
+        patient_path = os.path.join(patients_root_directory, patient)
+        print(f"-----> Processing Patient: ({patient_cpt}/{total_directories}: {patient_path}")
+        print(f"-----> Token Extraction: {patient_path}")
+        patient_token = token_extraction(patient_path, nlp)
+        print(f"\n-----> Extracted Token for the Patient: {patient_token}\n")
+
+        print(f"\n-----> Token Update")
+        if patient in results:
+            results[patient].update(patient_token)
+        else:
+            results[patient] = patient_token
+
+        print(f"\n Writing results.csv")
+        write_results_csv(results_file_path, results)
+
+        print(f"\n Update Vocabulary")
+        for tokens_set in results.values():
+            vocabulary.update(tokens_set)
+
+        patient_cpt += 1
+
+    print("\nStep 4 - Writing vocabulary.csv")
+    write_vocabulary_csv(vocabulary_file_path, vocabulary)

@@ -106,25 +106,25 @@ def token_extraction(patient_path, nlp):
 
     for file in os.listdir(patient_path):
         filepath = os.path.join(patient_path, file)
-        print(f"-----------> Processing {filepath}")
+        print(f"------> Processing {filepath}")
 
         # Check if the file is a text file
         if os.path.isfile(filepath) and filepath.lower().endswith('.txt'):
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    print(f"---------------> File Content Readed")
+                    print(f"----------> File Content Readed")
 
             except Exception as e:
                 print(f"<----- Error reading file '{filepath}': {e}")
 
             # Text summary
             # summary = summarize_text(content, nlp)
-            # print(f"---------------> Summary: {summary}")
+            # print(f"----------> Summary: {summary}")
 
             # Cleaning and translation
             translated_text = clean_and_translate(content, nlp)
-            print(f"---------------> Translated Tokens")
+            print(f"----------> Translated Tokens")
 
             patient_unique_tokens_set.update(translated_text)
 
