@@ -6,8 +6,12 @@
 
 import os
 import spacy
-from utils.reader_writer import read_results_file, write_results_csv, write_vocabulary_csv
-from utils.file_operation import create_or_recover_vocabulary, number_of_patients_and_files
+from utils.reader_writer import (read_results_file,
+                                 write_results_csv,
+                                 write_vocabulary_csv)
+from utils.file_operation import (create_or_recover_vocabulary,
+                                  number_of_patients_and_files,
+                                  matrix_of_occurrence)
 from utils.tokenization import token_extraction
 # Parameters
 
@@ -19,6 +23,10 @@ results_file = "results.csv"
 results_file_path = os.path.join(os.getcwd(), results_file)
 patients_directory_name = 'patients'
 patients_root_directory = os.path.join(os.getcwd(), patients_directory_name)
+matrix_file = "matrix.csv"
+matrix_file_path = os.path.join(os.getcwd(), matrix_file)
+hits_file = "hits.csv"
+hits_file_path = os.path.join(os.getcwd(), hits_file)
 
 # Functions Definition
 nlp = spacy.load('fr_core_news_sm', disable=['ner', 'textcat'])
@@ -96,3 +104,6 @@ for patient in os.listdir(patients_root_directory):
 
     print("\nStep 4 - Writing vocabulary.csv")
     write_vocabulary_csv(vocabulary_file_path, vocabulary)
+
+    print("\nStep 5 - Occurence Matrix")
+    matrix_of_occurrence(vocabulary, results_file_path, matrix_file_path, hits_file_path)

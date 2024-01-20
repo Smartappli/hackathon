@@ -1,4 +1,6 @@
 import os
+import numpy as np
+import csv
 from utils.reader_writer import read_vocabulary_file
 
 
@@ -52,3 +54,44 @@ def number_of_patients_and_files(root_directory):
                   os.path.isfile(os.path.join(patient_directory_path, f))])
 
     return total_directories, total_files
+
+
+def matrix_of_occurrence(vocabulary, results_file_path, matrix_path, hits_path):
+    patients_results = []
+
+    with open(results_file_path, 'r', encoding='utf-8') as csv_file:
+        csv_writer = csv.reader(csv_file)
+        for line in csv_writer:
+            patient_name = line[0].strip()
+            patient_tokens = line[1].strip().split(', ')
+            patients_results.append({'nom': patient_name, 'tokens': patient_tokens})
+
+    # Initialize the matrix with zeros
+    occurrence_matrix = np.zeros((len(patients_results), len(vocabulary)), dtype=int)
+
+    # Browse patients
+    for i, patient in enumerate(patients_results):
+        # Browse patient tokens
+        for j, word in enumerate(vocabulary):
+            # Count occurrences of the word in the patient's token list
+            occurrence_matrix[i, j] += patient['tokens'].count(word)
+
+    # Add an additional column containing the number of tokens per patient
+    occurrence_matrix = np.column_stack((occurrence_matrix, np.sum(occurrence_matrix, axis=1)))
+
+    # Add an extra line containing the number of occurrences per vocabulary word
+    occurrence_matrix = np.vstack((occurrence_matrix, np.sum(occurrence_matrix, axis=0)))
+
+    # Create an ordered list of vocabulary words sorted by descending hits
+    hits_by_word = dict(zip(vocabulary, occurrence_matrix[-1, :-1]))
+    words_ordered_by_hits = [mot for mot, hits in
+                            sorted(hits_by_word.items(), key=lambda item: item[1], reverse=True)]
+
+    # Save the matrix as a CSV file
+    np.savetxt(matrix_path, occurrence_matrix, delimiter=',', fmt='%d')
+
+    # Save the ordered list of vocabulary words as a CSV file
+    with open(hits_path, 'w', newline='', encoding='utf-8') as hits_csv_file:
+        writer_hits = csv.writer(hits_csv_file)
+        for word in words_ordered_by_hits:
+            writer_hits.writerow([word])
