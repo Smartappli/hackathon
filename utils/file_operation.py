@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import pandas as pd
 import csv
 from utils.reader_writer import read_vocabulary_file
 
@@ -81,12 +82,22 @@ def matrix_of_occurrence(vocabulary, results_file_path, matrix_path, hits_path):
     # Initialize the matrix with zeros
     occurrence_matrix = np.zeros((len(patients_results), len(vocabulary)), dtype=int)
 
+    columns = []
+    for k in vocabulary:
+        columns.append(k)
+
+    columns.append('Tokens')
+
+    rows = []
     # Browse patients
     for i, patient in enumerate(patients_results):
         # Browse patient tokens
+        rows.append(patient['nom'])
         for j, word in enumerate(vocabulary):
             # Count occurrences of the word in the patient's token list
             occurrence_matrix[i, j] += patient['tokens'].count(word)
+
+    rows.append("Total")
 
     # Add an additional column containing the number of tokens per patient
     occurrence_matrix = np.column_stack((occurrence_matrix, np.sum(occurrence_matrix, axis=1)))
@@ -96,11 +107,13 @@ def matrix_of_occurrence(vocabulary, results_file_path, matrix_path, hits_path):
 
     # Create an ordered list of vocabulary words sorted by descending hits
     hits_by_word = dict(zip(vocabulary, occurrence_matrix[-1, :-1]))
-    words_ordered_by_hits = [mot for mot, hits in
+    words_ordered_by_hits = [word for word, hits in
                             sorted(hits_by_word.items(), key=lambda item: item[1], reverse=True)]
 
     # Save the matrix as a CSV file
-    np.savetxt(matrix_path, occurrence_matrix, delimiter=',', fmt='%d')
+    # np.savetxt(matrix_path, occurrence_matrix, delimiter=',', fmt='%d')
+    df = pd.DataFrame(occurrence_matrix, index=rows, columns=columns)
+    df.to_csv(matrix_path, index=True, header=True, sep=',', encoding='utf-8')
 
     # Save the ordered list of vocabulary words as a CSV file
     with open(hits_path, 'w', newline='', encoding='utf-8') as hits_csv_file:
