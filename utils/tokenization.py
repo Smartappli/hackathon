@@ -1,57 +1,19 @@
 import os
-from spacy.lang.fr.stop_words import STOP_WORDS
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from googletrans import Translator
 
 
-def summarize_text(raw_text, nlp, ratio=0.2):
-    """
-    Summarize a given raw text using extractive summarization.
+def summarize_text(raw_text):
+    model_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-    Parameters:
-    - raw_text (str): The raw text to be summarized.
-    - nlp: A spaCy language model for text processing.
-    - ratio (float): The ratio of sentences to include in the summary (default is 0.2).
+    model = AutoModelForCausalLM.from_pretrained(model_id)
 
-    Returns:
-    - str: The summarized text.
+    text = 'Résume ce texte: "' + raw_text + "'"
+    inputs = tokenizer(text, return_tensors="pt")
 
-    Note:
-    - The function uses extractive summarization, selecting the most important sentences
-      based on the calculated scores of words in the text.
-    - Stop words and words with less than 3 characters are excluded from the analysis.
-    """
-    # Text preprocessing
-    doc = nlp(raw_text)
-
-    # Delete stop words and words of less than 3 characters
-    useful_words = {token.text.lower() for token in doc if token.text.lower() not in STOP_WORDS and len(token.text) > 2}
-    print(r"Useful_words: {usefull")
-
-    # Calculate word frequency
-    freq_words = {word: 1 for word in useful_words}  # Use of a set to avoid duplication
-    print(freq_words)
-    # Calculate the inverse document frequency (IDF) for each word
-    idf_words = {word: 1 / freq for word, freq in freq_words.items()}
-    print(idf_words['profession'])
-
-    # Calculate the score for each sentence based on the sum of its word scores
-    #scores_sentences = {sentence: sum(idf_words[word.lower()] for word in sentence) for sentence in doc.sents}
-    scores_sentences = {}
-    for sentence in doc.sents:
-        sentence_score = 0
-        for word in sentence:
-            word_lower = word.lower()
-            if word_lower in idf_words:
-                sentence_score += idf_words[word_lower]
-
-        scores_sentences[sentence] = sentence_score
-
-    # Select the most important sentences according to score
-    important_sentences = sorted(scores_sentences, key=scores_sentences.get, reverse=True)[
-                          :int(len(scores_sentences) * ratio)]
-
-    # Generate the summary by concatenating the selected sentences
-    summary = ' '.join(str(sentence) for sentence in important_sentences)
+    outputs = model.generate(**inputs, max_new_tokens=2048)
+    summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     return summary
 
@@ -119,11 +81,11 @@ def token_extraction(patient_path, nlp):
                 print(f"<----- Error reading file '{filepath}': {e}")
 
             # Text summary
-            # summary = summarize_text(content, nlp)
-            # print(f"----------> Summary: {summary}")
+            summary = summarize_text(content)
+            print(f"----------> Summary: {summary}")
 
             # Cleaning and translation
-            translated_text = clean_and_translate(content, nlp)
+            translated_text = clean_and_translate(summary, nlp)
             print(f"----------> Translated Tokens")
 
             patient_unique_tokens_set.update(translated_text)
