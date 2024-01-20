@@ -68,7 +68,7 @@ def write_results_csv(file_path, single_tokens_sets_per_patient):
     """
     with open(file_path, 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Patient', 'Tokens Uniques'])
+        # writer.writerow(['Patient', 'Tokens Uniques'])
         for patient, single_tokens_set in single_tokens_sets_per_patient.items():
             writer.writerow([patient, ', '.join(single_tokens_set)])
 
