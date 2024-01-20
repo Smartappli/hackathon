@@ -57,6 +57,18 @@ def number_of_patients_and_files(root_directory):
 
 
 def matrix_of_occurrence(vocabulary, results_file_path, matrix_path, hits_path):
+    """
+    Generates a matrix of occurrence based on a given vocabulary and patient results.
+
+    Args:
+        vocabulary (list): List of words to be considered in the occurrence matrix.
+        results_file_path (str): Path to the CSV file containing patient results.
+        matrix_path (str): Path to save the generated occurrence matrix as a CSV file.
+        hits_path (str): Path to save the ordered list of vocabulary words based on hits.
+
+    Returns:
+        None
+    """
     patients_results = []
 
     with open(results_file_path, 'r', encoding='utf-8') as csv_file:
