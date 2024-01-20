@@ -1,4 +1,4 @@
-spacy==3.7.2
+spacy
 googletrans==4.0.0-rc1
 numpy
 pandas
