@@ -1,6 +1,7 @@
 import os
 from utils.reader_writer import read_vocabulary_file
 
+
 def create_or_recover_vocabulary(file_path):
     """
     Creates or retrieves the vocabulary list from a CSV file.
@@ -20,6 +21,7 @@ def create_or_recover_vocabulary(file_path):
         vocabulary_list = []
 
     return set(vocabulary_list)
+
 
 def number_of_patients_and_files(root_directory):
     """
@@ -46,6 +48,7 @@ def number_of_patients_and_files(root_directory):
             # Count the total number of files in the patient's subdirectory
             total_directories += 1
             total_files += len \
-                ([f for f in os.listdir(patient_directory_path) if os.path.isfile(os.path.join(patient_directory_path, f))])
+                ([f for f in os.listdir(patient_directory_path) if
+                  os.path.isfile(os.path.join(patient_directory_path, f))])
 
     return total_directories, total_files

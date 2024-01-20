@@ -8,7 +8,7 @@ import os
 import spacy
 from utils.reader_writer import read_results_file
 from utils.file_operation import create_or_recover_vocabulary, number_of_patients_and_files
-
+from utils.tokenization import token_extraction
 # Parameters
 
 verbose = True
@@ -69,4 +69,9 @@ if verbose:
     print (f"-----> Patient directories to be processed: {patients_path}")
 
 print("\nStep 5 - Patients Processing")
-
+patient_cpt = 1
+for patient_path in patients_path:
+    print(f"-----> Processing Directory: ({patient_cpt}/{total_directories}: {patient_path}")
+    print(f"-----> Token Extraction: {patient_path}")
+    patient_token = token_extraction(patient_path, nlp)
+    print(patient_token)
