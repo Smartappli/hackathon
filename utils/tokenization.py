@@ -10,9 +10,8 @@ def summarize_text_gguf(raw_text):
     
     # Initialisez le pipeline LLM avec votre propre chemin vers les fichiers de poids quantifiés (gguf).
     summarization_pipeline = pipeline("summarization", model="Falconsai/medical_summarization", tokenizer=tokenizer)
-    
-    # Remplacez row_text par votre propre variable contenant le texte à résumer.
-    summary = summarization_pipeline(row_text)["summary_text"]
+
+    summary = summarization_pipeline(raw_text)["summary_text"]
 
     return summary
     
