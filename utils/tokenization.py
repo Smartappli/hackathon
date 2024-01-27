@@ -6,13 +6,12 @@ from googletrans import Translator
 def summarize_text(raw_text):
     model_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
-
     model = AutoModelForCausalLM.from_pretrained(model_id)
 
-    text = 'Résume ce texte: "' + raw_text + "'"
+    text = 'Résume ce texte: "' + raw_text + '"'
     inputs = tokenizer(text, return_tensors="pt")
 
-    outputs = model.generate(**inputs, max_new_tokens=2048)
+    outputs = model.generate(**inputs, max_length=2048)
     summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
     return summary
