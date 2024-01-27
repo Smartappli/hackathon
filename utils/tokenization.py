@@ -6,10 +6,10 @@ from googletrans import Translator
 
 def summarize_text_gguf(raw_text):
     # Initialisez le tokenizer LLM avec votre propre chemin vers les fichiers de vocabulaire quantifiés (gguf) et la configuration du modèle.
-    tokenizer = AutoTokenizer.from_pretrained("bigscience/moss-mixtral", use_fast=False, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained("microsoft/phi-2", use_fast=False, trust_remote_code=True)
     
     # Initialisez le pipeline LLM avec votre propre chemin vers les fichiers de poids quantifiés (gguf).
-    summarization_pipeline = pipeline("summarization", model="bigscience/moss-mixtral", tokenizer=tokenizer)
+    summarization_pipeline = pipeline("summarization", model="microsoft/phi-2", tokenizer=tokenizer)
     
     # Remplacez row_text par votre propre variable contenant le texte à résumer.
     summary = summarization_pipeline(row_text)["summary_text"]
