@@ -1,4 +1,5 @@
 import os
+import openai
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from googletrans import Translator
 
@@ -14,6 +15,18 @@ def summarize_text(raw_text):
     outputs = model.generate(**inputs, max_length=2048)
     summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
 
+    return summary
+
+def summarize_text_with_gpt3(raw_text):
+    openai.api_key = 'YOUR_API_KEY'  # Remplacez 'YOUR_API_KEY' par votre clé API GPT-3
+
+    response = openai.Completion.create(
+      engine="text-davinci-003",
+      prompt=f"Résume le texte suivant : '{raw_text}'",
+      max_tokens=100
+    )
+
+    summary = response.choices[0].text.strip()
     return summary
 
 
@@ -80,7 +93,7 @@ def token_extraction(patient_path, nlp):
                 print(f"<----- Error reading file '{filepath}': {e}")
 
             # Text summary
-            summary = summarize_text(content)
+            summary = summarize_text_with_gpt3(content)
             print(f"----------> Summary: {summary}")
 
             # Cleaning and translation
