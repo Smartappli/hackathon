@@ -4,7 +4,7 @@ from googletrans import Translator
 
 
 def summarize_text(raw_text):
-    model_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
+    model_id = "mistralai/Mixtral-8x7B-v0.1"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(model_id)
 
