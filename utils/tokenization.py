@@ -105,7 +105,7 @@ def token_extraction(patient_path, nlp):
                 print(f"<----- Error reading file '{filepath}': {e}")
 
             # Text summary
-            summary = summarize_text_with_gguf(content)
+            summary = ummarize_text_gguf(content)
             print(f"----------> Summary: {summary}")
 
             # Cleaning and translation
