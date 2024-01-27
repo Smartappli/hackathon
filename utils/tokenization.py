@@ -7,10 +7,10 @@ from googletrans import Translator
 
 def summarize_text_gguf(raw_text):
     # Initialisez le tokenizer LLM avec votre propre chemin vers les fichiers de vocabulaire quantifiés (gguf) et la configuration du modèle.
-    tokenizer = AutoTokenizer.from_pretrained("./mixtral-8x7b-v0.1.Q4_K_M.gguf", use_fast=False, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained("bigscience/moss-mixtral", use_fast=False, trust_remote_code=True)
     
     # Initialisez le pipeline LLM avec votre propre chemin vers les fichiers de poids quantifiés (gguf).
-    llm = lm.LLaMA(model="./mixtral-8x7b-v0.1.Q4_K_M.gguf", tokenizer=tokenizer, device='cuda')
+    llm = lm.LLaMA(model="bigscience/moss-mixtral", tokenizer=tokenizer, device='cuda')
     summarization_pipeline = pipeline("summarization", model=llm)
     
     # Remplacez row_text par votre propre variable contenant le texte à résumer.
