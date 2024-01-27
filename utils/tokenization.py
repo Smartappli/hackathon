@@ -1,9 +1,24 @@
 import os
 import openai
+import lampira as lm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from googletrans import Translator
 
 
+def summarize_text_gguf(raw_text):
+    # Initialisez le tokenizer LLM avec votre propre chemin vers les fichiers de vocabulaire quantifiés (gguf) et la configuration du modèle.
+    tokenizer = AutoTokenizer.from_pretrained("./mixtral-8x7b-v0.1.Q4_K_M.gguf", use_fast=False, trust_remote_code=True)
+    
+    # Initialisez le pipeline LLM avec votre propre chemin vers les fichiers de poids quantifiés (gguf).
+    llm = lm.LLaMA(model="./mixtral-8x7b-v0.1.Q4_K_M.gguf", tokenizer=tokenizer, device='cuda')
+    summarization_pipeline = pipeline("summarization", model=llm)
+    
+    # Remplacez row_text par votre propre variable contenant le texte à résumer.
+    input_ids = tokenizer(row_text, return_tensors="pt").input_ids
+    summary = summarization_pipeline(row_text)["summary_text"]
+
+    return summary
+    
 def summarize_text(raw_text):
     model_id = "mistralai/Mixtral-8x7B-v0.1"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -93,7 +108,7 @@ def token_extraction(patient_path, nlp):
                 print(f"<----- Error reading file '{filepath}': {e}")
 
             # Text summary
-            summary = summarize_text_with_gpt3(content)
+            summary = summarize_text_with_gguf(content)
             print(f"----------> Summary: {summary}")
 
             # Cleaning and translation
