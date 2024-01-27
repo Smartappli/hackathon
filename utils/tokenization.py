@@ -1,7 +1,6 @@
 import os
 import openai
-import lampira as lm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from googletrans import Translator
 
 
@@ -10,11 +9,9 @@ def summarize_text_gguf(raw_text):
     tokenizer = AutoTokenizer.from_pretrained("bigscience/moss-mixtral", use_fast=False, trust_remote_code=True)
     
     # Initialisez le pipeline LLM avec votre propre chemin vers les fichiers de poids quantifiés (gguf).
-    llm = lm.LLaMA(model="bigscience/moss-mixtral", tokenizer=tokenizer, device='cuda')
-    summarization_pipeline = pipeline("summarization", model=llm)
+    summarization_pipeline = pipeline("summarization", model="bigscience/moss-mixtral", tokenizer=tokenizer)
     
     # Remplacez row_text par votre propre variable contenant le texte à résumer.
-    input_ids = tokenizer(row_text, return_tensors="pt").input_ids
     summary = summarization_pipeline(row_text)["summary_text"]
 
     return summary
